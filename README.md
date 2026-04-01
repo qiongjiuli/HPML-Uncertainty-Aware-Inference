@@ -1,9 +1,6 @@
 # Uncertainty-Aware Inference
 ### How Quantization Affects LLM Confidence Calibration
 
-**Columbia University EECS 6895 — Advanced Big Data and AI**  
-**Mentor: Ruchi Muhindru, Distinguished Engineer, IBM Research**
-
 ---
 
 ## Overview
