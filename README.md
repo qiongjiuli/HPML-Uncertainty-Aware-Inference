@@ -16,14 +16,6 @@ confidence calibration** across three model families and five precision configs,
 and whether **knowledge distillation** from an FP16 teacher can recover
 lost calibration quality.
 
-**Teams and models:**
-
-| Team | Model        | Specialty                          |
-|------|--------------|------------------------------------|
-| A    | Llama-2 7B   | Calibration pipeline + KD          |
-| B    | Mistral 7B   | GPU profiling + vLLM serving       |
-| C    | Llama-2 13B  | Pareto analysis + routing          |
-
 ---
 
 ## Research Questions
@@ -175,7 +167,7 @@ python scripts/run_ptq_sweep.py \
 
 ---
 
-### Phase 2: GPU Profiling (Team B)
+### Phase 2: GPU Profiling
 
 ```bash
 # Profile all three models
@@ -211,7 +203,7 @@ python scripts/run_vllm_serving.py \
 
 ---
 
-### Phase 3: Knowledge Distillation (Team A)
+### Phase 3: Knowledge Distillation
 
 Run *after* the PTQ sweep has produced FP16 and GPTQ_INT4 calibration JSONs.
 
@@ -233,7 +225,7 @@ python scripts/run_kd.py \
 
 ---
 
-### Phase 3: Cross-Model Pareto + Routing (Team C)
+### Phase 3: Cross-Model Pareto + Routing 
 
 Run *after* all three PTQ sweeps and profiling are complete.
 
@@ -255,7 +247,7 @@ python scripts/run_analysis.py \
 
 ---
 
-### Stretch Goal: QAT (Team A, optional)
+### Stretch Goal: QAT
 
 Requires ~20 GB VRAM and 8–12 GPU hours.
 
@@ -273,38 +265,6 @@ python scripts/run_qat.py \
 - `QAT_NF4_LoRA_{Dataset}_calibration.json`
 - `plots/qat_vs_ptq.png` — three-way comparison (FP16 / PTQ INT4 / QAT INT4)
 - `qat_vs_ptq_comparison.json`
-
----
-
-## Execution Timeline
-
-```
-Week 1    All teams:  make install && pytest tests/
-          Team A:     run_ptq_sweep.py (FP16 only → validate calibration pipeline)
-          Team B:     run_profiling.py (FP16 baseline)
-          Team C:     set up W&B, repo, experiment tracking
-
-Week 2    All teams:  run_ptq_sweep.py (FP16 baseline, full datasets)
-
-Week 3    All teams:  run_ptq_sweep.py (GPTQ_INT8, GPTQ_INT4, AWQ_INT4, NF4)
-          Team B:     run_profiling.py (all precisions) + Nsight Systems
-
-Week 4    Team A:     entropy distribution analysis, prepare KD scripts
-          Team B:     run_vllm_serving.py (concurrency sweep)
-          Team C:     begin aggregating calibration results
-
-          ── CHECKPOINT: merge all results into shared repo ──
-
-Week 5    Team A:     run_kd.py (all 3 models)
-          Team B:     complete Roofline for Teams A & C models
-          Team C:     run_analysis.py (Pareto + routing)
-
-Week 6    Team A:     run_qat.py (stretch goal, if GPU budget permits)
-          Team B:     finalize Roofline figures + throughput tables
-          Team C:     finalize Pareto visualizations
-
-Weeks 7–8  All teams: write report sections, prepare presentation
-```
 
 ---
 
